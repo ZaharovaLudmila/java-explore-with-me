@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmServer.model.dto.ParticipationRequestDto;
 import ru.practicum.ewmServer.service.interfaces.RequestService;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.util.List;
 

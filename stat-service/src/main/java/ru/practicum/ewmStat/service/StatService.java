@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface StatService {
     EndpointHitDto saveHit(EndpointHitDto endpointHitDto);
+
     List<ViewsStats> getStat(ParametersStat params);
 }

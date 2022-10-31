@@ -24,6 +24,7 @@ public class StatClientService {
 
     @Value("${app.name}")
     private String appName;
+
     public void saveStatistic(String ip, String uri) {
         EndpointHitDto endpointHitDto = new EndpointHitDto(appName, uri, ip, LocalDateTime.now());
         statClient.saveHit(endpointHitDto);

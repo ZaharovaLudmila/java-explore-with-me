@@ -35,7 +35,7 @@ public class EventsPublicFindParams {
                                   HttpServletRequest request)
             throws DateTimeParseException {
         this.text = text;
-        if(categories != null) {
+        if (categories != null) {
             this.categories = categories;
         }
         this.paid = paid;

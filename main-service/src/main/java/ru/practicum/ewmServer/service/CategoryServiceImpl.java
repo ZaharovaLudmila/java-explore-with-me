@@ -45,7 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void adminDeleteCategory(long catId) {
-        if (eventRepository.findAllByCategoryId(catId) > 0 ) {
+        if (eventRepository.findAllByCategoryId(catId) > 0) {
             throw new ConditionException("Only categories not related to events can be deleted");
         }
         categoryRepository.deleteById(catId);
