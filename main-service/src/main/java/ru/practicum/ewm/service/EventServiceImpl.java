@@ -57,7 +57,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto publicGetEventById(long eventId, HttpServletRequest request) {
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
-                new NotFoundException("Событие с таким id не найдено!"));
+                new NotFoundException("Event with id = %d was not found."));
+        if (!event.getState().equals(EventState.PUBLISHED)) {
+            throw new ActionForbiddenException("Viewing an unpublished event is forbidden.");
+        }
         event.setViews(statClient.getViewsById(event));
         statClient.saveStatistic(request.getRemoteAddr(), request.getRequestURI());
         return EventMapper.toEventFullDto(event, requestRepository.getNumberOfConfirmRequest(event.getId()));

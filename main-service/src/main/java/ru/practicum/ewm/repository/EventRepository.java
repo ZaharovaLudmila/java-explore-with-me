@@ -40,5 +40,4 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("select count(event) from Event event " +
             "WHERE event.category.id = :catId ")
     int findAllByCategoryId(@Param("catId") long catId);
-
 }
