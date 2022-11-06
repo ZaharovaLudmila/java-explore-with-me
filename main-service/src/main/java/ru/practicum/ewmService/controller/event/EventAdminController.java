@@ -9,7 +9,6 @@ import ru.practicum.ewmService.model.dto.EventFullDto;
 import ru.practicum.ewmService.parametrs.EventsAdminFindParams;
 import ru.practicum.ewmService.service.interfaces.EventService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -30,15 +29,12 @@ public class EventAdminController {
                                            @RequestParam(name = "rangeEnd", required = false) String rangeEnd,
                                            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
                                            Integer from,
-                                           @Positive @RequestParam(name = "size", defaultValue = "10")
-                                           Integer size, HttpServletRequest request) {
-
-
+                                           @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
         log.info("Admin - получение событий с фильтрацией по пользователям: {}, статусам: {} и категориям: {}",
                 users, states, categories);
         return eventService.adminSearchEvents(new EventsAdminFindParams(users, states, categories, rangeStart,
-         rangeEnd, from, size), request);
+         rangeEnd, from, size));
     }
 
     @PutMapping("/events/{eventId}")

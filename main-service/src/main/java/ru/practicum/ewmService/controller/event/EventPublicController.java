@@ -39,7 +39,7 @@ public class EventPublicController {
 
         log.info("Public - получение событий с фильтрацией по описанию: {}", text);
         return eventService.publicSearchEvents(new EventsPublicFindParams(text, categories, paid, rangeStart, rangeEnd,
-                onlyAvailable, sort, from, size, request));
+                onlyAvailable, sort, from, size, request.getRemoteAddr(), request.getRequestURI()));
     }
 
     @GetMapping("/{id}")
@@ -47,6 +47,6 @@ public class EventPublicController {
 
         //вызов клиента для записи статистики
         log.info("Public - получение события по id: {}", id);
-        return eventService.publicGetEventById(id, request);
+        return eventService.publicGetEventById(id, request.getRemoteAddr(), request.getRequestURI());
     }
 }

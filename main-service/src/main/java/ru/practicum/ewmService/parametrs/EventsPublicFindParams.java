@@ -8,7 +8,6 @@ import ru.practicum.ewmService.exception.EventSortException;
 import ru.practicum.ewmService.exception.TimeException;
 import ru.practicum.ewmService.model.EventSort;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -33,7 +32,7 @@ public class EventsPublicFindParams {
 
     public EventsPublicFindParams(String text, List<Long> categories, Boolean paid, String rangeStart, String rangeEnd,
                                   Boolean onlyAvailable, String sort, Integer from, Integer size,
-                                  HttpServletRequest request)
+                                  String addr, String uri)
             throws DateTimeParseException {
         this.text = text;
         if (categories != null) {
@@ -60,7 +59,7 @@ public class EventsPublicFindParams {
                 .orElseThrow(() -> new EventSortException("Unknown sort: " + sort));
         this.page = this.sort == EventSort.EVENT_DATE ? PageRequest.of(from / size, size, Sort.Direction.ASC,
                 "eventDate") : PageRequest.of(from / size, size);
-        this.addr = request.getRemoteAddr();
-        this.uri = request.getRequestURI();
+        this.addr = addr;
+        this.uri = uri;
     }
 }

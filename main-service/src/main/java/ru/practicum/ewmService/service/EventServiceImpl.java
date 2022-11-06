@@ -16,8 +16,6 @@ import ru.practicum.ewmService.parametrs.UtilDateFormatter;
 import ru.practicum.ewmService.repository.*;
 import ru.practicum.ewmService.service.interfaces.EventService;
 
-
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -55,14 +53,14 @@ public class EventServiceImpl implements EventService {
 
     @Transactional
     @Override
-    public EventFullDto publicGetEventById(long eventId, HttpServletRequest request) {
+    public EventFullDto publicGetEventById(long eventId, String addr, String uri) {
         Event event = eventRepository.findById(eventId).orElseThrow(() ->
                 new NotFoundException("Event with id = %d was not found."));
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new ActionForbiddenException("Viewing an unpublished event is forbidden.");
         }
         event.setViews(statClient.getViewsById(event));
-        statClient.saveStatistic(request.getRemoteAddr(), request.getRequestURI());
+        statClient.saveStatistic(addr, uri);
         return EventMapper.toEventFullDto(event, requestRepository.getNumberOfConfirmRequest(event.getId()));
     }
 
@@ -204,8 +202,7 @@ public class EventServiceImpl implements EventService {
 
     @Transactional
     @Override
-    public List<EventFullDto> adminSearchEvents(EventsAdminFindParams params,
-                                                HttpServletRequest request) {
+    public List<EventFullDto> adminSearchEvents(EventsAdminFindParams params) {
         List<Event> events = eventRepository.findAllAdmin(params.getUsers(), params.getStates(), params.getCategories(),
                 params.getRangeStart(), params.getRangeEnd(), params.getPage());
         events = statClient.getViews(events);

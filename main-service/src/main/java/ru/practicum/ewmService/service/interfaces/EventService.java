@@ -5,13 +5,12 @@ import ru.practicum.ewmService.model.dto.*;
 import ru.practicum.ewmService.parametrs.EventsAdminFindParams;
 import ru.practicum.ewmService.parametrs.EventsPublicFindParams;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface EventService {
     List<EventShortDto> publicSearchEvents(EventsPublicFindParams params);
 
-    EventFullDto publicGetEventById(long eventId, HttpServletRequest request);
+    EventFullDto publicGetEventById(long eventId, String addr, String uri);
 
     List<EventShortDto> userFindEventsByInitiatorId(long userId, PageRequest of);
 
@@ -24,7 +23,7 @@ public interface EventService {
     EventFullDto userCancelEvent(long userId, long eventId);
 
 
-    List<EventFullDto> adminSearchEvents(EventsAdminFindParams eventsAdminFindParams, HttpServletRequest request);
+    List<EventFullDto> adminSearchEvents(EventsAdminFindParams eventsAdminFindParams);
 
     EventFullDto adminEditEvent(long eventId, AdminUpdateEventRequest eventDto);
 
