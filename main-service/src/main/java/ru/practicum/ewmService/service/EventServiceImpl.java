@@ -19,7 +19,9 @@ import ru.practicum.ewmService.service.interfaces.EventService;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,13 +43,14 @@ public class EventServiceImpl implements EventService {
         List<Event> events = eventRepository.findAllPublic(params.getText(), params.getCategories(), params.getPaid(),
                 params.getRangeStart(), params.getRangeEnd(), params.getPage());
         events = statClient.getViews(events);
-        if (params.getSort().equals(EventSort.VIEWS)) {
+        if (params.getSort() != null && params.getSort().equals(EventSort.VIEWS)) {
             events.sort(Comparator.comparingLong(Event::getViews).reversed());
         }
         statClient.saveStatistic(params.getAddr(), params.getUri());
+        Map<Long, Integer> participants = getNumberOfParticipants(events);
         return events.stream()
                 .map(event -> EventMapper.toEventShortDto(event,
-                        requestRepository.getNumberOfConfirmRequest(event.getId())))
+                        participants.getOrDefault(event.getId(),0)))
                 .collect(Collectors.toList());
     }
 
@@ -70,8 +73,9 @@ public class EventServiceImpl implements EventService {
         checkUser(userId);
         List<Event> events = eventRepository.findAllByInitiatorId(userId);
         events = statClient.getViews(events);
+        Map<Long, Integer> participants = getNumberOfParticipants(events);
         return events.stream().map(ev -> EventMapper.toEventShortDto(ev,
-                        requestRepository.getNumberOfConfirmRequest(ev.getId())))
+                        participants.getOrDefault(ev.getId(), 0)))
                 .collect(Collectors.toList());
     }
 
@@ -172,7 +176,7 @@ public class EventServiceImpl implements EventService {
                 new Event(0L, newEventDto.getAnnotation(), category, LocalDateTime.now(),
                         newEventDto.getDescription(), eventDate, user, location, newEventDto.getPaid(),
                         newEventDto.getParticipantLimit(), null, newEventDto.getRequestModeration(),
-                        EventState.PENDING, newEventDto.getTitle(), 0));
+                        EventState.PENDING, newEventDto.getTitle(), 0, 0.0));
         return EventMapper.toEventFullDto(event, 0);
     }
 
@@ -206,9 +210,10 @@ public class EventServiceImpl implements EventService {
         List<Event> events = eventRepository.findAllAdmin(params.getUsers(), params.getStates(), params.getCategories(),
                 params.getRangeStart(), params.getRangeEnd(), params.getPage());
         events = statClient.getViews(events);
+        Map<Long, Integer> participants = getNumberOfParticipants(events);
         return events.stream()
                 .map(event -> EventMapper.toEventFullDto(event,
-                        requestRepository.getNumberOfConfirmRequest(event.getId())))
+                        participants.getOrDefault(event.getId(), 0)))
                 .collect(Collectors.toList());
     }
 
@@ -287,6 +292,27 @@ public class EventServiceImpl implements EventService {
         eventRepository.save(event);
         event.setViews(statClient.getViewsById(event));
         return EventMapper.toEventFullDto(event, requestRepository.getNumberOfConfirmRequest(eventId));
+    }
+
+    @Transactional
+    @Override
+    public List<EventShortDto> publicGetEventsRate(PageRequest page) {
+        List<Event> events = eventRepository.findEventsByState(EventState.PUBLISHED, page);
+        Map<Long, Integer> participants = getNumberOfParticipants(events);
+        return events.stream().map(event -> EventMapper.toEventShortDto(event,
+                participants.getOrDefault(event.getId(),0)))
+                .collect(Collectors.toList());
+    }
+
+    private Map<Long, Integer> getNumberOfParticipants(List<Event> events) {
+        List<Long> ids = events.stream().map(Event::getId).collect(Collectors.toList());
+        List<Request> requests = requestRepository.findRequestsByEventIds(ids);
+        Map<Long, Integer> participants = new HashMap<>();
+        for (Request request : requests) {
+            participants.put(request.getEvent().getId(),
+                    participants.getOrDefault(request.getEvent().getId(), 0) + 1);
+        }
+        return participants;
     }
 
     private void checkUser(long userId) {

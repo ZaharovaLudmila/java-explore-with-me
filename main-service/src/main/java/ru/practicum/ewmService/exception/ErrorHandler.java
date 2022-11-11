@@ -2,6 +2,8 @@ package ru.practicum.ewmService.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -32,7 +34,8 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({DataIntegrityViolationException.class, ConditionException.class,
-    TimeException.class, EventSortException.class, ParticipationRequestException.class})
+            TimeException.class, EventSortException.class, ParticipationRequestException.class,
+            MissingServletRequestParameterException.class, MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleConditionException(final Exception e) {
         return new ApiError(Arrays.asList(e.getStackTrace().toString()), e.getMessage(),

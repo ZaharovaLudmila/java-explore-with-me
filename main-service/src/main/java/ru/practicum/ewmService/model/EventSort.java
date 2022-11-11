@@ -3,7 +3,7 @@ package ru.practicum.ewmService.model;
 import java.util.Optional;
 
 public enum EventSort {
-    EVENT_DATE, VIEWS;
+    EVENT_DATE, VIEWS, RATE;
 
     public static Optional<EventSort> from(String stringSort) {
         for (EventSort sort : values()) {

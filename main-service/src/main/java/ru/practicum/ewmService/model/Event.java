@@ -54,6 +54,7 @@ public class Event {
     private String title;
     @Transient
     private int views;
+    private Double rate;
 
     @Override
     public boolean equals(Object o) {

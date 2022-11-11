@@ -24,6 +24,7 @@ public class User {
     @Column(nullable = false, unique = true)
     @Size(max = 320)
     private String email;
+    private Double rate;
 
     @Override
     public boolean equals(Object o) {

@@ -15,4 +15,5 @@ public class UserShortDto {
     private Long id;
     @NotBlank
     private String name;
+    private String rate;
 }

@@ -7,6 +7,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 public class ViewsStats {
+    private String app;
     private String uri;
     private int hits;
 }
