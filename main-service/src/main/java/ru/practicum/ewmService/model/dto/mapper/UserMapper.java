@@ -10,6 +10,7 @@ public class UserMapper {
     }
 
     public static UserShortDto toUserShortDto(User user) {
-        return new UserShortDto(user.getId(), user.getName());
+        return new UserShortDto(user.getId(), user.getName(), user.getRate() != null
+                ? user.getRate().toString() + " %" : "нет отзывов");
     }
 }

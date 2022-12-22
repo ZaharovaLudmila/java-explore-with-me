@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface StatRepository extends JpaRepository<EndpointHit, Long>  {
-    @Query(value = "select new ru.practicum.ewmStat.model.dto.ViewsStats(e.app, e.uri, count(e.ip)) " +
+    @Query(value = "select new ru.practicum.ewmStat.model.dto.ViewsStats(e.app, e.uri, count(distinct e.ip)) " +
             "from EndpointHit as e " +
             "where e.timestamp between :start and :end " +
             "and (coalesce(:uris, null) is null or e.uri in :uris) " +
@@ -20,7 +20,7 @@ public interface StatRepository extends JpaRepository<EndpointHit, Long>  {
     List<ViewsStats> getStatsUnique(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end,
                                     @Param("uris") List<String> uris);
 
-    @Query(value = "select new ru.practicum.ewmStat.model.dto.ViewsStats(e.app, e.uri, count(distinct e.ip)) " +
+    @Query(value = "select new ru.practicum.ewmStat.model.dto.ViewsStats(e.app, e.uri, count(e.ip)) " +
             "from EndpointHit as e " +
             "where e.timestamp between :start and :end " +
             "and (coalesce(:uris, null) is null or e.uri in :uris) " +

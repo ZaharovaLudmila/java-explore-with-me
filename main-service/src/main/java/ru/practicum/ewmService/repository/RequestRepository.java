@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.practicum.ewmService.model.Request;
+import ru.practicum.ewmService.model.StatusRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,11 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
             "WHERE req.event.id = :eventId " +
             "AND req.status = 'CONFIRMED'")
     int getNumberOfConfirmRequest(@Param("eventId") long eventId);
+
+    @Query("select req from Request req " +
+            "WHERE req.event.id in :ids " +
+            "AND req.status = 'CONFIRMED'")
+    List<Request> findRequestsByEventIds(@Param("ids") List<Long> ids);
 
     @Query("select req from Request req " +
             "WHERE req.event.id = :eventId " +
@@ -39,4 +45,6 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
             "AND req.event.initiator.id = :userId")
     Optional<Request> findUserEventsRequest(@Param("reqId") long reqId, @Param("eventId") long eventId,
                                             @Param("userId") long userId);
+
+    boolean existsByRequesterIdAndEventIdAndStatus(long userId, long eventId, StatusRequest status);
 }

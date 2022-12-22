@@ -11,7 +11,8 @@ public class EventMapper {
         return new EventShortDto(event.getAnnotation(), CategoryMapper.toCategoryDto(event.getCategory()),
                 confirmedRequests, event.getEventDate()
                 .format(UtilDateFormatter.getFormatter()), event.getId(),
-                UserMapper.toUserShortDto(event.getInitiator()), event.getPaid(), event.getTitle(), event.getViews());
+                UserMapper.toUserShortDto(event.getInitiator()), event.getPaid(), event.getTitle(), event.getViews(),
+                event.getRate() != null ? event.getRate().toString() + " %" : "нет отзывов");
     }
 
     public static EventFullDto toEventFullDto(Event event, int confirmedRequests) {
@@ -24,7 +25,8 @@ public class EventMapper {
                 event.getParticipantLimit(),
                 event.getPublishedOn() != null ?
                         event.getPublishedOn().format(UtilDateFormatter.getFormatter()) : null,
-                event.getRequestModeration(), event.getState(), event.getTitle(), event.getViews());
+                event.getRequestModeration(), event.getState(), event.getTitle(), event.getViews(),
+                event.getRate() != null ? event.getRate().toString() + " %" : "нет отзывов");
     }
 
 }

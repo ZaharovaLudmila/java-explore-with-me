@@ -28,16 +28,22 @@ public class EventsAdminFindParams {
     public EventsAdminFindParams(List<Long> users, List<String> states, List<Long> categories, String rangeStart,
                                  String rangeEnd, Integer from, Integer size) throws DateTimeParseException {
         this.users = users;
-        this.states = states.stream().map(EventState::from)
-                .map(s -> s.orElseThrow(() -> new IllegalArgumentException("Unknown state: " + s)))
-                .collect(Collectors.toList());
+        if (states != null) {
+            this.states = states.stream().map(EventState::from)
+                    .map(s -> s.orElseThrow(() -> new IllegalArgumentException("Unknown state: " + s)))
+                    .collect(Collectors.toList());
+        }
         this.categories = categories;
 
         if (rangeStart != null) {
             this.rangeStart = LocalDateTime.parse(rangeStart, formatter);
+        } else {
+            this.rangeStart = LocalDateTime.now().minusYears(100);
         }
         if (rangeEnd != null) {
             this.rangeEnd = LocalDateTime.parse(rangeEnd, formatter);
+        } else {
+            this.rangeEnd = LocalDateTime.now().plusYears(100);
         }
 
         if (this.rangeStart != null && this.rangeEnd != null && this.rangeStart.isAfter(this.rangeEnd)) {

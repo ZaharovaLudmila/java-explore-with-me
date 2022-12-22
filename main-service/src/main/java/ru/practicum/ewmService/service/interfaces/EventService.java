@@ -30,5 +30,7 @@ public interface EventService {
     EventFullDto adminPublishEvent(long eventId);
 
     EventFullDto adminRejectEvent(long eventId);
+
+    List<EventShortDto> publicGetEventsRate(PageRequest of);
 }
 

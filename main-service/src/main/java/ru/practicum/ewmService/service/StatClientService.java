@@ -41,10 +41,10 @@ public class StatClientService {
                     .get().getCreatedOn());
             String end = returnDate(LocalDateTime.now());
 
-            ResponseEntity<Object> obj = statClient.getStats(start, end,
+            ResponseEntity<List<ViewsStats>> obj = statClient.getStats(start, end,
                     eventsMap.values().toArray(new String[0]), false);
 
-            List<ViewsStats> statsList = (List<ViewsStats>) obj.getBody();
+            List<ViewsStats> statsList = obj.getBody();
             Map<String, Integer> views = statsList != null && !statsList.isEmpty() ? statsList.stream().collect(
                     Collectors.toMap(ViewsStats::getUri, ViewsStats::getHits)) : null;
             if (views != null && !views.isEmpty()) {
@@ -57,8 +57,8 @@ public class StatClientService {
     public int getViewsById(Event event) {
         String start = returnDate(event.getCreatedOn());
         String end = returnDate(LocalDateTime.now());
-        ResponseEntity<Object> obj = statClient.getStats(start, end, new String[]{"/event/" + event.getId()}, false);
-        List<ViewsStats> statsList = (List<ViewsStats>) obj.getBody();
+        ResponseEntity<List<ViewsStats>> obj = statClient.getStats(start, end, new String[]{"/events/" + event.getId()}, false);
+        List<ViewsStats> statsList = obj.getBody();
         if (statsList != null && statsList.size() > 0) {
             return statsList.stream().findFirst().get().getHits();
         }

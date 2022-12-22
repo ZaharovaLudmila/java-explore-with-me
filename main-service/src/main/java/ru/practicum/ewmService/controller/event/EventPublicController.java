@@ -2,6 +2,8 @@ package ru.practicum.ewmService.controller.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmService.model.dto.EventFullDto;
@@ -48,5 +50,16 @@ public class EventPublicController {
         //вызов клиента для записи статистики
         log.info("Public - получение события по id: {}", id);
         return eventService.publicGetEventById(id, request.getRemoteAddr(), request.getRequestURI());
+    }
+
+    @GetMapping("/rate")
+    public List<EventShortDto> getEventsRate(@PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
+                                             Integer from,
+                                             @Positive @RequestParam(name = "size", defaultValue = "10")
+                                             Integer size) {
+
+        //вызов клиента для записи статистики
+        log.info("Public - получение всех опубликованных событий с сортировкой по рейтингу");
+        return eventService.publicGetEventsRate(PageRequest.of(from / size, size, Sort.Direction.DESC, "rate"));
     }
 }

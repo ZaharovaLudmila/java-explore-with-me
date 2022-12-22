@@ -1,5 +1,6 @@
 package ru.practicum.ewmService.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import ru.practicum.ewmService.model.EventState;
 import ru.practicum.ewmService.model.Location;
@@ -36,4 +37,6 @@ public class EventFullDto {
     @NotBlank
     private String title;
     private int views;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String rate;
 }

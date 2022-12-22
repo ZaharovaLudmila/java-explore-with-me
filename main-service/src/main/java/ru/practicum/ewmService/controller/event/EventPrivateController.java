@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmService.service.interfaces.EventService;
+import ru.practicum.ewmService.service.interfaces.LikeService;
 import ru.practicum.ewmService.service.interfaces.RequestService;
 import ru.practicum.ewmService.model.dto.*;
 
@@ -21,6 +22,7 @@ import java.util.List;
 public class EventPrivateController {
     private final EventService eventService;
     private final RequestService requestService;
+    private final LikeService likeService;
 
     @GetMapping("/{userId}/events")
     public List<EventShortDto> findEventsByInitiatorId(@PathVariable("userId") long userId,
@@ -86,5 +88,19 @@ public class EventPrivateController {
         log.info("Private - отклонение зявки на участие c id = {} в событии с id = {} инициатором с id = {}",
                 reqId, userId, eventId);
         return requestService.userRejectRequest(userId, eventId, reqId);
+    }
+
+    @PutMapping("/{userId}/events/{eventId}/likes")
+    public void addLike(@PathVariable("userId") long userId, @PathVariable("eventId") long eventId,
+                        @RequestParam(name = "isPositive") Boolean isPositive) {
+        log.info("Private - Добавление like/dislike = {} событию с id {} пользователем с id {}",
+                isPositive, eventId, userId);
+        likeService.userAddLike(userId, eventId, isPositive);
+    }
+
+    @DeleteMapping("/{userId}/events/{eventId}/likes")
+    public void deleteLike(@PathVariable("userId") long userId, @PathVariable("eventId") long eventId) {
+        log.info("Private - удаление like/dislike события с id {} пользователем с id {}", eventId, userId);
+        likeService.userDeleteLike(userId, eventId);
     }
 }
